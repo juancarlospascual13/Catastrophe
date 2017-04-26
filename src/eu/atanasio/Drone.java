@@ -11,8 +11,8 @@ import lombok.EqualsAndHashCode;
 public class Drone extends Machine {
     private int deathCounter;
 
-    public Drone (int deathCounter) {
-        super();
+    public Drone (String name, int deathCounter) {
+        super(name);
         this.deathCounter = deathCounter;
     }
 

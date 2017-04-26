@@ -11,7 +11,8 @@ import lombok.EqualsAndHashCode;
 public class Machine extends Pickable {
     private boolean broken;
 
-    public Machine() {
+    public Machine(String name) {
+        super(name);
         this.broken = false;
     }
 

@@ -11,4 +11,8 @@ import lombok.EqualsAndHashCode;
 public class Rubble extends Pickable {
     private boolean assessed;
     private boolean radioactive;
+
+    public Rubble(String name) {
+        super(name);
+    }
 }

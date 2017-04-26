@@ -51,8 +51,13 @@ public class TroubleMaker {
             }
         }
         for (int i = 0; i < cleaners.length; i++) {
+            if (cleaners[i].getCargo() == null){
+                out += "        (empty cleaner" + i + ")\n" ;
+            }
+            else {
+                out += "        (full " + cleaners[i].getCargo().getName() + " cleaner" + i + ")\n" ;
+            }
             out += "        (is_active cleaner" + i + ")\n" +
-                    "        (empty cleaner" + i + ")\n" +
                     "        (at cleaner" + i;
             for (int z = 0; z < map.getWaypoints().length; z++) {
                 if (cleaners[i].getPosition().equals(map.getWaypoints()[z]))

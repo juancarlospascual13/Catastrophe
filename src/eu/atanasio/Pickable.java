@@ -8,6 +8,11 @@ import lombok.Data;
 @Data
 public class Pickable {
     private Waypoint position;
+    private String name;
+
+    public Pickable(String name) {
+        this.name = name;
+    }
 
     public boolean atDump(){
         return this.getPosition().isDump();

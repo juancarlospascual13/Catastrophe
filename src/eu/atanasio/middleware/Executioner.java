@@ -32,16 +32,16 @@ public class Executioner {
     public static Waypoint r4 = new Waypoint("r4");
     public static BuildingMap map = getMap();
 
-    public static Drone drone0 = new Drone(50);
-    public static Cleaner cleaner0 = new Cleaner(50);
-    public static Rubble rubble0 = new Rubble();
-    public static Rubble rubble1 = new Rubble();
+    public static Drone drone0 = new Drone("drone0",50);
+    public static Cleaner cleaner0 = new Cleaner("cleaner0",50);
+    public static Rubble rubble0 = new Rubble("rubble0");
+    public static Rubble rubble1 = new Rubble("rubble1");
 
 
-    public static Drone drone0End = new Drone(50);
-    public static Cleaner cleaner0End = new Cleaner(50);
-    public static Rubble rubble0End = new Rubble();
-    public static Rubble rubble1End = new Rubble();
+    public static Drone drone0End = new Drone("drone0",50);
+    public static Cleaner cleaner0End = new Cleaner("cleaner0",50);
+    public static Rubble rubble0End = new Rubble("rubble0");
+    public static Rubble rubble1End = new Rubble("rubble1");
 
     public static Cleaner[] cleaners = {cleaner0};
     public static Drone[] drones = {drone0};

@@ -12,8 +12,8 @@ public class Cleaner extends Machine {
     private int deathCounter;
     private Pickable cargo;
 
-    public Cleaner(int deathCounter) {
-        super();
+    public Cleaner(String name, int deathCounter) {
+        super(name);
         this.deathCounter = deathCounter;
     }
 
