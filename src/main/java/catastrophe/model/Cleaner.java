@@ -1,20 +1,22 @@
-package eu.atanasio;
+package main.java.catastrophe.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import main.java.catastrophe.Exceptions.CleanerOperationException;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Created by victorperez on 14/04/17.
  */
-@Data
-@EqualsAndHashCode(callSuper=true,exclude={"deathCounter","cargo"})
+@NoArgsConstructor
+@Getter
+@Setter
 public class Cleaner extends Machine {
     private int deathCounter;
     private Pickable cargo;
 
-    public Cleaner(String name, int deathCounter) {
-        super(name);
-        this.deathCounter = deathCounter;
+    public Cleaner(String id) {
+        super(id);
     }
 
     public void pickUp (Pickable item) throws CleanerOperationException {

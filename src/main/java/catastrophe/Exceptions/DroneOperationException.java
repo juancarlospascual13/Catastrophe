@@ -1,4 +1,4 @@
-package eu.atanasio;
+package main.java.catastrophe.Exceptions;
 
 /**
  * Created by victorperez on 16/04/17.

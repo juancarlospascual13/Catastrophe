@@ -1,18 +1,20 @@
-package eu.atanasio;
+package main.java.catastrophe.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Created by victorperez on 14/04/17.
  */
-@Data
-@EqualsAndHashCode(callSuper=true)
+@NoArgsConstructor
+@Getter
+@Setter
 public class Machine extends Pickable {
     private boolean broken;
 
-    public Machine(String name) {
-        super(name);
+    public Machine(String id) {
+        super(id);
         this.broken = false;
     }
 

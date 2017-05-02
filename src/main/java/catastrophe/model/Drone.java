@@ -1,19 +1,21 @@
-package eu.atanasio;
+package main.java.catastrophe.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import main.java.catastrophe.Exceptions.DroneOperationException;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Created by victorperez on 14/04/17.
  */
-@Data
-@EqualsAndHashCode(callSuper=true,exclude={"deathCounter"})
+@NoArgsConstructor
+@Getter
+@Setter
 public class Drone extends Machine {
     private int deathCounter;
 
-    public Drone (String name, int deathCounter) {
-        super(name);
-        this.deathCounter = deathCounter;
+    public Drone (String id) {
+        super(id);
     }
 
     public boolean assess (Rubble item) throws DroneOperationException {
@@ -24,6 +26,7 @@ public class Drone extends Machine {
                 deathCounter--;
             if (deathCounter<=0)
                 this.setBroken(true);
+            item.setAssessed(true);
             return item.isRadioactive();
         }
         else
