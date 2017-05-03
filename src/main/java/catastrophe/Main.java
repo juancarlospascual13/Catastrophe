@@ -10,6 +10,6 @@ public class Main {
         Configuration conf = Configuration.getInstance();
         conf.getProperties().setProperty("map", args[0]);
         Executioner exe = new Executioner();
-        exe.init();
+        exe.start();
     }
 }

@@ -22,7 +22,8 @@ import java.io.PrintWriter;
 /**
  * Created by victorperez on 18/04/17.
  */
-public class Executioner {
+public class Executioner extends Thread {
+    private Thread thread;
     static Configuration conf = Configuration.getInstance();
 
     public void runPlanner(){
@@ -39,7 +40,8 @@ public class Executioner {
         }
     }
 
-    public void init(){
+    @Override
+    public void run(){
         runPlanner();
 
         try {
@@ -181,5 +183,13 @@ public class Executioner {
                 return -1;
         }
         return -1;
+    }
+
+    public void start () {
+        System.out.println("Starting " +  "thread" );
+        if (thread == null) {
+            thread = new Thread (this, "thread");
+            thread.start ();
+        }
     }
 }
