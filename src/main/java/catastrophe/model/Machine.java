@@ -22,4 +22,5 @@ public class Machine extends Pickable {
         if (this.getPosition().getConnectedWaypoints().contains(waypoint))
             this.setPosition(waypoint);
     }
+
 }
