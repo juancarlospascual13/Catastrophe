@@ -3,28 +3,34 @@ package main.java.catastrophe;
 import main.java.catastrophe.middleware.Executioner;
 import main.java.catastrophe.model.Machine;
 import main.java.catastrophe.singletons.Configuration;
+import main.java.catastrophe.singletons.Logger;
 import main.java.catastrophe.singletons.PointMap;
 
 import java.util.ArrayList;
 
+import static java.lang.Thread.sleep;
+
 public class Main {
-//Nota. Funciona de chiripa. Hay que hacer que los hilos esperen a que el resto cumpla sus objetivos.
 
     public static void main(String[] args) {
         Configuration conf = Configuration.getInstance();
         conf.getProperties().setProperty("map", args[0]);
+        conf.getProperties().setProperty("result", args[1]);
         conf.getProperties().setProperty("nextPlan", "1");
+        Logger log = Logger.getInstance();
         PointMap map = PointMap.getInstance();
         ArrayList<Executioner> threads = new ArrayList<>();
         for (Machine m : map.getListfromParticipants(Machine.class)){
             Executioner aux = new Executioner(m.getId());
             threads.add(aux);
         }
+        log.println("Start");
         for (Executioner ex : threads){
             ex.start();
         }
         int waiting = 0;
         int nextPlan = 0;
+
         while (waiting < threads.size()){
             waiting = 0;
             nextPlan = Integer.parseInt(conf.getProperties().getProperty("nextPlan"));
@@ -41,6 +47,11 @@ public class Main {
                             ex.notify();
                     }
                 }
+                try {//We don't need to be checking this all the time
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         for (Executioner ex : threads){
@@ -49,5 +60,7 @@ public class Main {
                 ex.notify();
             }
         }
+        log.println("Finish");
+        log.close();
     }
 }

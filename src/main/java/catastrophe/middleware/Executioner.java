@@ -11,6 +11,7 @@ import main.java.catastrophe.model.Pickable;
 import main.java.catastrophe.model.Rubble;
 import main.java.catastrophe.model.Waypoint;
 import main.java.catastrophe.singletons.Configuration;
+import main.java.catastrophe.singletons.Logger;
 import main.java.catastrophe.singletons.PointMap;
 
 import java.io.BufferedReader;
@@ -33,6 +34,7 @@ public class Executioner implements Runnable {
     private String next;
     private int currentPlan;
     private Configuration conf = Configuration.getInstance();
+    private Logger log = Logger.getInstance();
 
     public Executioner(String id) {
         this.id = id;
@@ -103,18 +105,7 @@ public class Executioner implements Runnable {
                     return 0;
                 }
             }
-            /*try {
-                PrintWriter printer = new PrintWriter(conf.getProperty("output") + "/simulation_results");
-                printer.print(sb.toString());
-                printer.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }*/
-        } /*catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/ catch (CommandExecutionException e) {
+        }  catch (CommandExecutionException e) {
             e.printStackTrace();
         }
         return -1;
@@ -246,39 +237,12 @@ public class Executioner implements Runnable {
     }
 
     public void start () {
-        System.out.println("Starting: " +  id );
+        log.println("Starting: " +  id );
         if (thread == null) {
             thread = new Thread (this, id);
             thread.start ();
         }
     }
-
-    /*public void finish (){
-        waiting = true;
-        synchronized (this) {
-            while ((currentPlan == nextPlan) && !shutdown) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (!shutdown){
-                run();
-            }
-        }
-    }*/
-
-    /*public void rePlan(){
-        synchronized (this){
-            this.commands = runPlanner();
-            this.next = commands.get(0);
-            this.currentPlan = nextPlan;
-            this.shutdown = false;
-            this.waiting = false;
-            this.notify();
-        }
-    }*/
 
     public void run(){
         while (!shutdown) {
@@ -287,18 +251,18 @@ public class Executioner implements Runnable {
                 if ((currentPlan == Integer.parseInt(conf.getProperties().getProperty("nextPlan"))) && !shutdown) {
                     while (next.equals("") && !shutdown) {
                         try {
-                            System.out.println(id + ": waiting...");
+                            log.println(id + ": waiting...");
                             waiting = true;
                             this.wait();
                             if (shutdown)
-                                System.out.println(id + ": Shutting down");
+                                log.println(id + ": Shutting down");
                             else
-                                System.out.println(id + ": waking...");
+                                log.println(id + ": waking...");
                             if (!next.equals("")) {
                                 String name;
                                 name = next.split(":? +\\(?|\\)")[3].toLowerCase();
                                 if (name.equals(id)) {
-                                    System.out.println(id + ": " + next);
+                                    log.println(id + ": " + next);
                                 }
                                 aux = runNextCommand();
                             }
@@ -313,7 +277,7 @@ public class Executioner implements Runnable {
                 String name;
                 name = next.split(":? +\\(?|\\)")[3].toLowerCase();
                 if (name.equals(id)) {
-                    System.out.println(id + ": " + next);
+                    log.println(id + ": " + next);
                 }
                 aux = runNextCommand();
             }
