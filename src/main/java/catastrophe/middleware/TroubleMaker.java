@@ -49,6 +49,7 @@ public class TroubleMaker {
         out += ")\n" +
                 "(:init\n";
         for (Drone d : drones) {
+            out += "        (= (pick_machine " + d.getId() + ") 2)\n";
             out += "        (is_active " + d.getId() + ")\n" +
                     "        (at " + d.getId();
             for (Waypoint w : map.getWaypoints()) {
@@ -63,6 +64,7 @@ public class TroubleMaker {
             }
         }
         for (Cleaner c : cleaners) {
+            out += "        (= (pick_machine " + c.getId() + ") 2)\n";
             if (c.getCargo() == null){
                 out += "        (empty " + c.getId() + ")\n" ;
             }
@@ -83,6 +85,7 @@ public class TroubleMaker {
             }
         }
         for (Rubble r : rubbles) {
+            out += "        (= (pick_rubble " + r.getId() + ") 1)\n";
             out += "        (at " + r.getId();
             for (Waypoint w : map.getWaypoints()) {
                 if (r.getPosition().equals(w))
@@ -94,14 +97,15 @@ public class TroubleMaker {
         }
         for (Waypoint x : map.getWaypoints()) {
             for (Waypoint y : map.getWaypoints()) {
-                if (x.getConnectedWaypoints().contains(y))
-                    out += "        (visible " + x.getId() + " " + y.getId() + ")\n";
                 if (x.getConnectedWaypointsByFlight().contains(y))
                     out += "        (traversable_flight " + x.getId() + " " + y.getId() + ")\n";
                 if (x.getConnectedWaypointsByLand().contains(y))
                     out += "        (traversable_land " + x.getId() + " " + y.getId() + ")\n";
+                if (x.getConnectedWaypoints().contains(y))
+                    out += "        (= (distance " + x.getId() + " " + y.getId() + ") 1)\n";
             }
         }
+        out += "        (= (total-cost) 0)\n";
         out += ")\n" +
                 "(:goal (and\n";
         for (Cleaner c : cleanersEnd) {
@@ -135,6 +139,7 @@ public class TroubleMaker {
         }
         out += "       )\n" +
                 ")\n" +
+                "(:metric minimize (total-cost))\n" +
                 ")\n";
         try {
             PrintWriter printer = new PrintWriter(conf.getProperty("output") + "/p01.pddl");
