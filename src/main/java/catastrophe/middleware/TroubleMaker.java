@@ -49,8 +49,7 @@ public class TroubleMaker {
         out += ")\n" +
                 "(:init\n";
         for (Drone d : drones) {
-            out += "        (= (pick_machine " + d.getId() + ") 2)\n";
-            out += "        (is_active " + d.getId() + ")\n" +
+            out += "        (= (pick_machine " + d.getId() + ") 2)\n" +
                     "        (at " + d.getId();
             for (Waypoint w : map.getWaypoints()) {
                 if (d.getPosition().equals(w))
@@ -71,8 +70,7 @@ public class TroubleMaker {
             else {
                 out += "        (full " + c.getCargo().getId() + " " + c.getId() + ")\n" ;
             }
-            out += "        (is_active " + c.getId() + ")\n" +
-                    "        (at " + c.getId();
+            out += "        (at " + c.getId();
             for (Waypoint w : map.getWaypoints()) {
                 if (c.getPosition().equals(w))
                     out += " " + w.getId() + ")\n";
@@ -130,10 +128,9 @@ public class TroubleMaker {
                 out += "            (is_clean " + r.getId() + ")\n";
             }
             else { //Is assessed but not radioactive
-                out += "            (at " + r.getId();
                 for (Waypoint w : map.getWaypoints()) {
-                    if (rubblesEnd.get(rubbles.indexOf(r)).getPosition().equals(w))
-                        out += " " + w.getId() + ")\n";
+                    if (rubblesEnd.contains(r) && rubblesEnd.get(rubblesEnd.indexOf(r)).getPosition().equals(w))
+                        out += "            (at " + r.getId() + " " + w.getId() + ")\n";
                 }
             }
         }
