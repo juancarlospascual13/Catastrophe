@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 public class Machine extends Pickable {
     private boolean broken;
+    private int deathCounter;
 
     public Machine(String id) {
         super(id);

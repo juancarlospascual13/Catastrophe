@@ -45,10 +45,12 @@ public class Executioner implements Runnable {
     }
 
     public ArrayList<String> runPlanner(){
-        TroubleMaker.make();
+        //Write PDDL code
+        TroubleMaker.make(id);
 
+        //Exesute planner
         try {
-            Process p=Runtime.getRuntime().exec("./run-map.sh -d " + conf.getProperty("output") + "/domain.pddl -p " + conf.getProperty("output") + "/p01.pddl -o " + id + " -A cmap -s mingoals -P private -M nil  -a lama-unit-cost -r lama-unit-cost -g subsets -y nil -Y lama-second -t 1800 -C t",
+            Process p=Runtime.getRuntime().exec("./run-map.sh -d " + conf.getProperty("output") + "/domain.pddl -p " + conf.getProperty("output") + "/" + id + ".pddl -o " + id + " -A cmap -s mingoals -P private -M nil  -a lama-seq -r lama-opt -g subsets -y nil -Y lama-second -t 5 -C t",
                     null, new File(conf.getProperty("cmap")));
             p.waitFor();
         } catch (IOException e) {
@@ -57,9 +59,11 @@ public class Executioner implements Runnable {
             e.printStackTrace();
         }
 
+        //Read instructions
         ArrayList<String> c = new ArrayList<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(conf.getProperty("cmap") + "/" + id));
+            File instructionsFile = new File (conf.getProperty("cmap") + "/" + id);
+            BufferedReader br = new BufferedReader(new FileReader(instructionsFile));
             String line = br.readLine();
 
             while (line != null) {
@@ -68,6 +72,12 @@ public class Executioner implements Runnable {
                 }
                 line = br.readLine();
             }
+            //If the planner didn't produce instructions, the simulation will try to carry on
+            if (c.size() == 0)
+                c.add("");
+
+            //Delete file
+            instructionsFile.delete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -79,13 +89,10 @@ public class Executioner implements Runnable {
     //returns current position
     public int runNextCommand(){
         try {
-            //StringBuilder sb = new StringBuilder();
-
             if(!next.startsWith(";;")) {
-                //sb.append(line);
-                //sb.append(System.lineSeparator());
                 int execResult = executeCommand(next.split(":? +\\(?|\\)"));
                 if (( execResult > 0) || (currentPlan < Integer.parseInt(conf.getProperties().getProperty("nextPlan")))) {
+                    //Replan here!
                     this.commands = runPlanner();
                     this.next = commands.get(0);
                     if (execResult > 0) {
@@ -189,9 +196,9 @@ public class Executioner implements Runnable {
                                     }
                                     synchronized (r) {
                                         Rubble aux = (Rubble) r;
-                                        while (!(aux.isAssessed() && aux.isRadioactive())) {
-                                            r.wait();
-                                        }
+                                        /*while (!(aux.isAssessed() && (aux.getRadioactivity() > 0))) {
+                                            r.wait(); // It shouldn't get to this wait, really. If rubble needs to be picked up, that's it.
+                                        }*/
                                         cls.pickUp(r);
                                     }
                                     return 0;
@@ -219,6 +226,12 @@ public class Executioner implements Runnable {
                                     return 0;
                                 case "DROP":
                                     cls.dump();
+                                    try {
+                                        if (cls.getDeathCounter() <= map.getFinalState(Cleaner.class, cls).getDeathCounter())
+                                            return 1;
+                                    } catch (NotFoundInMapException e) {
+                                        throw new CommandExecutionException("Could not find cleaner final state: " + name);
+                                    }
                                     return 0;
                                 case "PLACE_AT":
                                     cls.dump();
@@ -226,8 +239,6 @@ public class Executioner implements Runnable {
                             }
                         }
                     } catch (CleanerOperationException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     return -1;
@@ -257,7 +268,7 @@ public class Executioner implements Runnable {
                             if (shutdown)
                                 log.println(id + ": Shutting down");
                             else
-                                log.println(id + ": waking...");
+                                log.println(id + ": waking up!");
                             if (!next.equals("")) {
                                 String name;
                                 name = next.split(":? +\\(?|\\)")[3].toLowerCase();

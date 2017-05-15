@@ -5,7 +5,7 @@
       "id" : "drone0",
       "broken" : false,
       "position" : "r0",
-      "deathCounter" : 50
+      "deathCounter" : 5
     },
     {
       "class" : "Cleaner",
@@ -18,16 +18,9 @@
     {
       "class" : "Rubble",
       "assessed" : false,
-      "id" : "rubble0",
-      "position" : "r4",
-      "radioactivity" : 5
-    },
-    {
-      "class" : "Rubble",
-      "assessed" : false,
       "position" : "r3",
       "radioactivity" : 5,
-      "id" : "rubble1"
+      "id" : "rubble0"
     }
   ],
   "waypoints" : [
@@ -94,7 +87,7 @@
       "position" : "r0",
       "broken" : false,
       "id" : "drone0",
-      "deathCounter" : 25
+      "deathCounter" : 3
     },
     {
       "class" : "Cleaner",
@@ -108,13 +101,6 @@
       "class" : "Rubble",
       "assessed" : true,
       "id" : "rubble0",
-      "radioactivity" : 0,
-      "position" : "r1"
-    },
-    {
-      "class" : "Rubble",
-      "assessed" : true,
-      "id" : "rubble1",
       "position" : "r1",
       "radioactivity" : 0
     }

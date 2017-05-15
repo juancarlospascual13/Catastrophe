@@ -17,7 +17,7 @@ import java.util.List;
 public class TroubleMaker {
     static Configuration conf = Configuration.getInstance();
 
-    public static void make() {
+    public static void make(String name) {
         PointMap map = PointMap.getInstance();
         List<Cleaner> cleaners = map.getListfromParticipants(Cleaner.class);
         List<Drone> drones = map.getListfromParticipants(Drone.class);
@@ -49,21 +49,21 @@ public class TroubleMaker {
         out += ")\n" +
                 "(:init\n";
         for (Drone d : drones) {
-            out += "        (= (pick_machine " + d.getId() + ") 2)\n" +
+            out += "        (= (pick_machine " + d.getId() + ") 20)\n" +
                     "        (at " + d.getId();
             for (Waypoint w : map.getWaypoints()) {
                 if (d.getPosition().equals(w))
                     out += " " + w.getId() + ")\n";
             }
-            if (d.isBroken()){
-                out += "        (is_broken " + d.getId() + ")\n";
-            }
-            else {
+            if (!d.isBroken()){
                 out += "        (is_active " + d.getId() + ")\n";
+            }
+            if (d.getDeathCounter() > dronesEnd.get(dronesEnd.indexOf(d)).getDeathCounter()) {
+                out += "        (not_damaged " + d.getId() + ")\n";
             }
         }
         for (Cleaner c : cleaners) {
-            out += "        (= (pick_machine " + c.getId() + ") 2)\n";
+            out += "        (= (pick_machine " + c.getId() + ") 20)\n";
             if (c.getCargo() == null){
                 out += "        (empty " + c.getId() + ")\n" ;
             }
@@ -75,21 +75,21 @@ public class TroubleMaker {
                 if (c.getPosition().equals(w))
                     out += " " + w.getId() + ")\n";
             }
-            if (c.isBroken()){
-                out += "        (is_broken " + c.getId() + ")\n";
-            }
-            else {
+            if (!c.isBroken()){
                 out += "        (is_active " + c.getId() + ")\n";
+            }
+            if (c.getDeathCounter() > cleanersEnd.get(cleanersEnd.indexOf(c)).getDeathCounter()) {
+                out += "        (not_damaged " + c.getId() + ")\n";
             }
         }
         for (Rubble r : rubbles) {
-            out += "        (= (pick_rubble " + r.getId() + ") 1)\n";
+            out += "        (= (pick_rubble " + r.getId() + ") 200)\n";
             out += "        (at " + r.getId();
             for (Waypoint w : map.getWaypoints()) {
                 if (r.getPosition().equals(w))
                     out += " " + w.getId() + ")\n";
             }
-            if (r.isAssessed() && r.isRadioactive()) {
+            if (r.isAssessed() && (r.getRadioactivity() > 0)) {
                 out += "        (is_radioactive " + r.getId() + ")\n";
             }
         }
@@ -106,14 +106,22 @@ public class TroubleMaker {
         out += "        (= (total-cost) 0)\n";
         out += ")\n" +
                 "(:goal (and\n";
+        int damagedCleanersCounter = 0;
         for (Cleaner c : cleanersEnd) {
+            //We count hoe many cleaners are damaged or dead
+            if (cleaners.get(cleaners.indexOf(c)).isBroken() || (cleaners.get(cleaners.indexOf(c)).getDeathCounter() <= c.getDeathCounter()))
+                damagedCleanersCounter++;
             out += "            (at " + c.getId();
             for (Waypoint w : map.getWaypoints()) {
                 if (c.getPosition().equals(w))
                     out += " " + w.getId() + ")\n";
             }
         }
+        int damagedDronesCounter = 0;
         for (Drone d : dronesEnd) {
+            //We count hoe many drones are damaged or dead
+            if (drones.get(drones.indexOf(d)).isBroken() || (drones.get(drones.indexOf(d)).getDeathCounter() <= d.getDeathCounter()))
+                damagedDronesCounter++;
             out += "            (at " + d.getId();
             for (Waypoint w : map.getWaypoints()) {
                 if (d.getPosition().equals(w))
@@ -122,14 +130,17 @@ public class TroubleMaker {
         }
         for (Rubble r : rubbles) {
             if (!r.isAssessed()){
-                out += "            (assessed " + r.getId() + ")\n";
+                //Can't assess without healthy drones, and so on
+                if (damagedDronesCounter < drones.size())
+                    out += "            (assessed " + r.getId() + ")\n";
             }
-            else if (r.isRadioactive()){
-                out += "            (is_clean " + r.getId() + ")\n";
+            else if (r.getRadioactivity() > 0){
+                if (damagedCleanersCounter < cleaners.size())
+                    out += "            (is_clean " + r.getId() + ")\n";
             }
             else { //Is assessed but not radioactive
                 for (Waypoint w : map.getWaypoints()) {
-                    if (rubblesEnd.contains(r) && rubblesEnd.get(rubblesEnd.indexOf(r)).getPosition().equals(w))
+                    if ((damagedCleanersCounter < cleaners.size()) && rubblesEnd.contains(r) && rubblesEnd.get(rubblesEnd.indexOf(r)).getPosition().equals(w))
                         out += "            (at " + r.getId() + " " + w.getId() + ")\n";
                 }
             }
@@ -139,7 +150,7 @@ public class TroubleMaker {
                 "(:metric minimize (total-cost))\n" +
                 ")\n";
         try {
-            PrintWriter printer = new PrintWriter(conf.getProperty("output") + "/p01.pddl");
+            PrintWriter printer = new PrintWriter(conf.getProperty("output") + "/" + name + ".pddl");
             printer.print(out);
             printer.close();
         } catch (FileNotFoundException e) {

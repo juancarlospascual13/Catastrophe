@@ -20,7 +20,7 @@
       "assessed" : false,
       "id" : "rubble0",
       "position" : "r4",
-      "radioactivity" : 5
+      "radioactivity" : 0
     },
     {
       "class" : "Rubble",

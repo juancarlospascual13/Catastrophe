@@ -12,10 +12,10 @@
 (:predicates
              (at ?p - pickable ?w - waypoint)
              (assessed ?r - rubble)
-             (is_radioactive ?r - rubble)
-             (is_clean ?r - pickable)
+             (is_radioactive ?p - pickable)
+             (is_clean ?p - pickable)
              (is_active ?m - machine)
-             (is_broken ?m - machine)
+             (not_damaged ?m - machine)
              (traversable_land ?x - waypoint ?y - waypoint)
              (traversable_flight ?x - waypoint ?y - waypoint)
              (empty ?c - cleaner)
@@ -40,7 +40,7 @@
 :effect (and
              (not (at ?cleaner ?y))
              (at ?cleaner ?z)
-	     	(increase (total-cost) (distance ?y ?z))
+             (increase (total-cost) (distance ?y ?z))
         )
 )
 
@@ -64,6 +64,7 @@
 :parameters (?r - rubble ?w - waypoint)
 :precondition (and
               (is_active ?drone)
+              (not_damaged ?drone)
               (at ?r ?w)
               (at ?drone ?w)
               )
@@ -77,6 +78,7 @@
 :parameters (?r - rubble ?x - waypoint)
 :precondition (and
               (is_active ?cleaner)
+              (not_damaged ?cleaner)
               (at ?cleaner ?x)
               (at ?r ?x)
               (empty ?cleaner)
@@ -96,7 +98,6 @@
               (is_active ?cleaner)
               (at ?cleaner ?x)
               (at ?r ?x)
-              (is_broken ?r)
               (empty ?cleaner)
               )
 :effect (and
@@ -112,6 +113,7 @@
 :parameters (?pickable - pickable ?w - dump)
 :precondition (and
               (is_active ?cleaner)
+              (is_radioactive ?pickable)
               (full ?pickable ?cleaner)
               (at ?cleaner ?w)
               )

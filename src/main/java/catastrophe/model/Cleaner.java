@@ -12,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Cleaner extends Machine {
-    private int deathCounter;
     private Pickable cargo;
 
     public Cleaner(String id) {
@@ -25,8 +24,11 @@ public class Cleaner extends Machine {
         if (cargo != null)
             throw new CleanerOperationException("This cleaner is full");
         if (item.getPosition().equals(this.getPosition())){
-            deathCounter--;
-            if (deathCounter<=0)
+            if (item instanceof Rubble) {
+                Rubble r = (Rubble) item;
+                super.setDeathCounter(super.getDeathCounter() - r.getRadioactivity());
+            }
+            if (super.getDeathCounter() <= 0)
                 this.setBroken(true);
             cargo = item;
         }
@@ -40,9 +42,12 @@ public class Cleaner extends Machine {
         if (cargo == null)
             throw new CleanerOperationException("This cleaner is already empty");
         else {
-            deathCounter--;
-            if (deathCounter<=0)
+            if (super.getDeathCounter() <= 0)
                 this.setBroken(true);
+            if ((cargo instanceof Rubble) && getPosition().isDump()){
+                Rubble r = (Rubble) cargo;
+                r.setRadioactivity(0);
+            }
             cargo = null;
         }
     }
@@ -51,7 +56,6 @@ public class Cleaner extends Machine {
         if (this.isBroken())
             throw new CleanerOperationException("This cleaner is broken");
         if (this.getPosition().getConnectedWaypointsByLand().contains(waypoint)){
-            deathCounter--;
             move(waypoint);
             if (cargo != null)
                 cargo.setPosition(waypoint);

@@ -5,12 +5,12 @@
       "id" : "drone0",
       "broken" : false,
       "position" : "r0",
-      "deathCounter" : 50
+      "deathCounter" : 999
     },
     {
       "class" : "Cleaner",
       "cargo" : null,
-      "deathCounter" : 50,
+      "deathCounter" : 999,
       "id" : "cleaner0",
       "position" : "r0",
       "broken" : false
@@ -28,7 +28,29 @@
       "position" : "r3",
       "radioactivity" : 5,
       "id" : "rubble1"
+    },
+    {
+      "class" : "Rubble",
+      "assessed" : false,
+      "position" : "r5",
+      "radioactivity" : 0,
+      "id" : "rubble2"
+    },
+    {
+      "class" : "Rubble",
+      "assessed" : false,
+      "position" : "r6",
+      "radioactivity" : 5,
+      "id" : "rubble3"
+    },
+    {
+      "class" : "Rubble",
+      "assessed" : false,
+      "position" : "r7",
+      "radioactivity" : 5,
+      "id" : "rubble4"
     }
+
   ],
   "waypoints" : [
     {
@@ -70,10 +92,12 @@
       "dump" : false,
       "connectedWaypointsByFlight" : [
         "r2",
-        "r4"
+        "r4",
+        "r5"
       ],
       "connectedWaypointsByLand" : [
-        "r2"
+        "r2",
+        "r5"
       ]
     },
     {
@@ -86,6 +110,53 @@
       "connectedWaypointsByLand" : [
         "r2"
       ]
+    },
+    {
+      "id" : "r5",
+      "dump" : false,
+      "connectedWaypointsByFlight" : [
+        "r3",
+        "r6"
+      ],
+      "connectedWaypointsByLand" : [
+        "r3",
+        "r6",
+        "r8"
+      ]
+    },
+    {
+      "id" : "r6",
+      "dump" : false,
+      "connectedWaypointsByFlight" : [
+        "r5",
+        "r7"
+
+      ],
+      "connectedWaypointsByLand" : [
+        "r5"
+      ]
+    },
+    {
+      "id" : "r7",
+      "dump" : false,
+      "connectedWaypointsByFlight" : [
+        "r6"
+
+      ],
+      "connectedWaypointsByLand" : [
+        "r8"
+      ]
+    },
+    {
+      "id" : "r8",
+      "dump" : false,
+      "connectedWaypointsByFlight" : [
+
+      ],
+      "connectedWaypointsByLand" : [
+        "r5",
+        "r7"
+      ]
     }
   ],
   "finalState" : [
@@ -94,14 +165,14 @@
       "position" : "r0",
       "broken" : false,
       "id" : "drone0",
-      "deathCounter" : 25
+      "deathCounter" : 50
     },
     {
       "class" : "Cleaner",
       "broken" : false,
       "position" : "r0",
       "id" : "cleaner0",
-      "deathCounter" : 25,
+      "deathCounter" : 50,
       "cargo" : null
     },
     {
@@ -117,6 +188,20 @@
       "id" : "rubble1",
       "position" : "r1",
       "radioactivity" : 0
+    },
+    {
+      "class" : "Rubble",
+      "assessed" : true,
+      "id" : "rubble3",
+      "radioactivity" : 0,
+      "position" : "r1"
+    },
+    {
+      "class" : "Rubble",
+      "assessed" : true,
+      "id" : "rubble4",
+      "radioactivity" : 0,
+      "position" : "r1"
     }
   ]
 }

@@ -86,7 +86,7 @@ public class PointMapDeserializer extends JsonDeserializer<PointMap> {
                     break;
                 case "Rubble":
                     Rubble r = new Rubble(node.get("participants").get(i).get("id").asText());
-                    r.setRadioactive(node.get("participants").get(i).get("radioactive").asBoolean());
+                    r.setRadioactivity(node.get("participants").get(i).get("radioactivity").asInt());
                     r.setAssessed(node.get("participants").get(i).get("assessed").asBoolean());
                     for(Waypoint w : waypointList){
                         Waypoint aux = new Waypoint(node.get("participants").get(i).get("position").asText());
@@ -142,7 +142,7 @@ public class PointMapDeserializer extends JsonDeserializer<PointMap> {
                     break;
                 case "Rubble":
                     Rubble r = new Rubble(node.get("finalState").get(i).get("id").asText());
-                    r.setRadioactive(node.get("finalState").get(i).get("radioactive").asBoolean());
+                    r.setRadioactivity(node.get("finalState").get(i).get("radioactivity").asInt());
                     r.setAssessed(node.get("finalState").get(i).get("assessed").asBoolean());
                     for(Waypoint w : waypointList){
                         Waypoint aux = new Waypoint(node.get("finalState").get(i).get("position").asText());

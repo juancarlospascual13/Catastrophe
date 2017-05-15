@@ -7,10 +7,10 @@ import lombok.EqualsAndHashCode;
  * Created by victorperez on 14/04/17.
  */
 @Data
-@EqualsAndHashCode(callSuper=true,exclude={"assessed","radioactive"})
+@EqualsAndHashCode(callSuper=true,exclude={"assessed","radioactivity"})
 public class Rubble extends Pickable {
     private boolean assessed;
-    private boolean radioactive;
+    private int radioactivity;
 
     public Rubble(String name) {
         super(name);

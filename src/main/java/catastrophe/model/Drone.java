@@ -12,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Drone extends Machine {
-    private int deathCounter;
 
     public Drone (String id) {
         super(id);
@@ -22,12 +21,11 @@ public class Drone extends Machine {
         if (this.isBroken())
             throw new DroneOperationException("This drone is broken");
         if (item.getPosition().equals(this.getPosition())){
-            if (item.isRadioactive())
-                deathCounter--;
-            if (deathCounter<=0)
+            super.setDeathCounter(super.getDeathCounter() - item.getRadioactivity());
+            if (super.getDeathCounter() <= 0)
                 this.setBroken(true);
             item.setAssessed(true);
-            return item.isRadioactive();
+            return item.getRadioactivity() > 0;
         }
         else
             throw new DroneOperationException("This drone and the pickable object are not in the same position");
@@ -37,7 +35,6 @@ public class Drone extends Machine {
         if (this.isBroken())
             throw new DroneOperationException("This drone is broken");
         if(this.getPosition().getConnectedWaypointsByFlight().contains(waypoint)){
-            deathCounter--;
             move(waypoint);
         }
     }
