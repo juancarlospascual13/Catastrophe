@@ -49,14 +49,17 @@ public class Executioner implements Runnable {
         TroubleMaker.make(id);
 
         //Execute planner
-        try {
-            Process p=Runtime.getRuntime().exec("./run-map.sh -d " + conf.getProperty("output") + "/domain.pddl -p " + conf.getProperty("output") + "/" + id + ".pddl -o " + id + " -A cmap -s mingoals -P private -M nil  -a lama-seq -r lama-opt -g subsets -y nil -Y lama-second -t 5 -C t",
-                    null, new File(conf.getProperty("cmap")));
-            p.waitFor();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        Runtime runtime = Runtime.getRuntime();
+        synchronized (runtime) {
+            try {
+                Process p = runtime.exec("./run-map.sh -d " + conf.getProperty("output") + "/domain.pddl -p " + conf.getProperty("output") + "/" + id + ".pddl -o " + id + " -A cmap -s mingoals -P private -M nil  -a lama-seq -r lama-opt -g subsets -y nil -Y lama-second -t 5 -C t",
+                        null, new File(conf.getProperty("cmap")));
+                p.waitFor();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         //Read instructions
