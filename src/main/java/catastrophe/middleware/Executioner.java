@@ -48,7 +48,7 @@ public class Executioner implements Runnable {
         //Write PDDL code
         TroubleMaker.make(id);
 
-        //Exesute planner
+        //Execute planner
         try {
             Process p=Runtime.getRuntime().exec("./run-map.sh -d " + conf.getProperty("output") + "/domain.pddl -p " + conf.getProperty("output") + "/" + id + ".pddl -o " + id + " -A cmap -s mingoals -P private -M nil  -a lama-seq -r lama-opt -g subsets -y nil -Y lama-second -t 5 -C t",
                     null, new File(conf.getProperty("cmap")));
