@@ -34,6 +34,7 @@ public class Logger {
     }
 
     public void println (String s){
+        System.out.println(s);
         writer.println(s);
     }
 

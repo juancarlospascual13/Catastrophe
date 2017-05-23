@@ -14,53 +14,59 @@ public class Main {
 
     public static void main(String[] args) {
         Configuration conf = Configuration.getInstance();
-        conf.getProperties().setProperty("map", args[0]);
-        conf.getProperties().setProperty("result", args[1]);
-        conf.getProperties().setProperty("nextPlan", "1");
-        Logger log = Logger.getInstance();
-        PointMap map = PointMap.getInstance();
-        ArrayList<Executioner> threads = new ArrayList<>();
-        for (Machine m : map.getListfromParticipants(Machine.class)){
-            Executioner aux = new Executioner(m.getId());
-            threads.add(aux);
-        }
-        log.println("Start");
-        for (Executioner ex : threads){
-            ex.start();
-        }
-        int waiting = 0;
-        int nextPlan = 0;
+        if (args.length == 2) {
+            conf.getProperties().setProperty("map", args[0]);
+            conf.getProperties().setProperty("result", args[1]);
+            conf.getProperties().setProperty("nextPlan", "1");
+            Logger log = Logger.getInstance();
+            PointMap map = PointMap.getInstance();
+            ArrayList<Executioner> threads = new ArrayList<>();
+            for (Machine m : map.getListfromParticipants(Machine.class)) {
+                Executioner aux = new Executioner(m.getId());
+                threads.add(aux);
+            }
+            log.println("Start");
+            for (Executioner ex : threads) {
+                ex.start();
+            }
+            int waiting = 0;
+            int nextPlan = 0;
 
-        while (waiting < threads.size()){
-            waiting = 0;
-            nextPlan = Integer.parseInt(conf.getProperties().getProperty("nextPlan"));
-            for (Executioner ex : threads){
-                synchronized (ex) {
-                    if (ex.isWaiting() && (ex.getCurrentPlan() == Integer.parseInt(conf.getProperties().getProperty("nextPlan"))) && (nextPlan == Integer.parseInt(conf.getProperties().getProperty("nextPlan"))))
-                        waiting++;
-                    else if (ex.getCurrentPlan() < Integer.parseInt(conf.getProperties().getProperty("nextPlan"))){
+            while (waiting < threads.size()) {
+                waiting = 0;
+                nextPlan = Integer.parseInt(conf.getProperties().getProperty("nextPlan"));
+                for (Executioner ex : threads) {
+                    synchronized (ex) {
+                        if (ex.isWaiting() && (ex.getCurrentPlan() == Integer.parseInt(conf.getProperties().getProperty("nextPlan"))) && (nextPlan == Integer.parseInt(conf.getProperties().getProperty("nextPlan"))))
+                            waiting++;
+                        else if (ex.getCurrentPlan() < Integer.parseInt(conf.getProperties().getProperty("nextPlan"))) {
                             ex.setCommands(ex.runPlanner());
                             ex.setNext(ex.getCommands().get(0));
                             ex.setCurrentPlan(Integer.parseInt(conf.getProperties().getProperty("nextPlan")));
                             ex.setShutdown(false);
                             ex.setWaiting(false);
                             ex.notify();
+                        }
+                    }
+                    try {//We don't need to be checking this all the time
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
-                try {//We don't need to be checking this all the time
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            }
+            for (Executioner ex : threads) {
+                synchronized (ex) {
+                    ex.setShutdown(true);
+                    ex.notify();
                 }
             }
+            log.println("Finish");
+            log.close();
         }
-        for (Executioner ex : threads){
-            synchronized (ex) {
-                ex.setShutdown(true);
-                ex.notify();
-            }
+        else {
+            System.out.println("This program needs two arguments, the path to a problem and a path to save a log");
+            System.out.println("Usage: java -jar catastrophe.jar ../p01.json results");
         }
-        log.println("Finish");
-        log.close();
     }
 }
